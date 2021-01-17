@@ -206,7 +206,7 @@ class Ui_VImage_Main(object):
         self.Rotate_Right_Button.setText("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(
-            "c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_right_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            "C:/Users/Himanshu/Desktop/Files/Projects/VImage/VImage-2/src/Source/rotate_right_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Rotate_Right_Button.setIcon(icon)
         self.Rotate_Right_Button.setIconSize(QtCore.QSize(48, 48))
         self.Rotate_Right_Button.setObjectName("Rotate_Right_Button")
@@ -216,7 +216,7 @@ class Ui_VImage_Main(object):
         self.Rotate_Flip_Button.setText("")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(
-            "c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_flip_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            "C:/Users/Himanshu/Desktop/Files/Projects/VImage/VImage-2/src/Source/rotate_flip_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Rotate_Flip_Button.setIcon(icon1)
         self.Rotate_Flip_Button.setIconSize(QtCore.QSize(48, 48))
         self.Rotate_Flip_Button.setObjectName("Rotate_Flip_Button")
@@ -226,7 +226,7 @@ class Ui_VImage_Main(object):
         self.Rotate_Left_Button.setText("")
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(
-            "c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_left_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            "C:/Users/Himanshu/Desktop/Files/Projects/VImage/VImage-2/src/Source/rotate_left_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Rotate_Left_Button.setIcon(icon2)
         self.Rotate_Left_Button.setIconSize(QtCore.QSize(48, 48))
         self.Rotate_Left_Button.setObjectName("Rotate_Left_Button")
