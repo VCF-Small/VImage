@@ -362,7 +362,6 @@ class Ui_VImage_Main(object):
         self.Sharpness_Slider.setValue(100)
         try:
             self.preview_img_data = self.imgData
-            self.preview_img_data = self.imgData
             self.open_path, self.image, self.imgData = action_controls.Open()
             self.Show()
         except:
