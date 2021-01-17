@@ -11,13 +11,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from numpy.lib.type_check import imag
 import action_controls
 import image_processing
-from PIL import ImageQt, Image
+from PIL import ImageQt, ImageFilter, ImageEnhance
+
+
 class Ui_VImage_Main(object):
     def setupUi(self, VImage_Main):
         self.open_path = None
         self.save_path = None
-        self.imgData  = None #This is The PIL Image
-        self.image = None #This is the QT Image 
+        self.imgData = None  # This is The PIL Image
+        self.image = None  # This is the QT Image
         self.preview_img_data = None
         self.rotate_angle = 0
         self.is_Flip = False
@@ -25,40 +27,40 @@ class Ui_VImage_Main(object):
         VImage_Main.resize(1373, 891)
         VImage_Main.setMinimumSize(QtCore.QSize(640, 480))
         VImage_Main.setStyleSheet("QSlider::groove:horizontal {height: 10px; margin: 0 0;}\n"
-"QSlider::handle:horizontal {background-color: rgb(0,150,250); border: 1px; border-radius:3px; height: \n"
-"40px; width: 40px; margin: 0 0;}\n"
-"QSlider::handle:horizontal:hover {background-color: rgb(0,200,150); border: 1px; border-radius:3px; height: \n"
-"    40px; width: 40px; margin: 0 0;}\n"
-"*{\n"
-"    \n"
-"    font: 8pt \"MS Shell Dlg 2\";\n"
-"}\n"
-"#Tool_Box QLabel{\n"
-"\n"
-"    font: 10pt \"MS Shell Dlg 2\";\n"
-"}\n"
-"\n"
-"QPushButton{\n"
-"    background-color:rgb(230,240,240);\n"
-"border:none;\n"
-"border-radius: 5px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"    background-color:rgb(230,255,255);\n"
-"    border:none;\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"    background-color:rgb(200,255,255);\n"
-"    border:none;\n"
-"}\n"
-"\n"
-"#VImage_Main{\n"
-"    background-color:rgb(255,255,255);\n"
-"}\n"
-"\n"
-"")
+                                  "QSlider::handle:horizontal {background-color: rgb(0,150,250); border: 1px; border-radius:3px; height: \n"
+                                  "40px; width: 40px; margin: 0 0;}\n"
+                                  "QSlider::handle:horizontal:hover {background-color: rgb(0,200,150); border: 1px; border-radius:3px; height: \n"
+                                  "    40px; width: 40px; margin: 0 0;}\n"
+                                  "*{\n"
+                                  "    \n"
+                                  "    font: 8pt \"MS Shell Dlg 2\";\n"
+                                  "}\n"
+                                  "#Tool_Box QLabel{\n"
+                                  "\n"
+                                  "    font: 10pt \"MS Shell Dlg 2\";\n"
+                                  "}\n"
+                                  "\n"
+                                  "QPushButton{\n"
+                                  "    background-color:rgb(230,240,240);\n"
+                                  "border:none;\n"
+                                  "border-radius: 5px;\n"
+                                  "}\n"
+                                  "\n"
+                                  "QPushButton:hover{\n"
+                                  "    background-color:rgb(230,255,255);\n"
+                                  "    border:none;\n"
+                                  "}\n"
+                                  "\n"
+                                  "QPushButton:pressed{\n"
+                                  "    background-color:rgb(200,255,255);\n"
+                                  "    border:none;\n"
+                                  "}\n"
+                                  "\n"
+                                  "#VImage_Main{\n"
+                                  "    background-color:rgb(255,255,255);\n"
+                                  "}\n"
+                                  "\n"
+                                  "")
         self.centralwidget = QtWidgets.QWidget(VImage_Main)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
@@ -72,42 +74,50 @@ class Ui_VImage_Main(object):
         self.gridLayout_3 = QtWidgets.QGridLayout(self.Filter_Box)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.Template_Label_1 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_1.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_1.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_1.setText("")
         self.Template_Label_1.setObjectName("Template_Label_1")
         self.gridLayout_3.addWidget(self.Template_Label_1, 0, 0, 1, 1)
         self.Template_Label_2 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_2.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_2.setText("")
         self.Template_Label_2.setObjectName("Template_Label_2")
         self.gridLayout_3.addWidget(self.Template_Label_2, 0, 1, 1, 1)
         self.Template_Label_7 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_7.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_7.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_7.setText("")
         self.Template_Label_7.setObjectName("Template_Label_7")
         self.gridLayout_3.addWidget(self.Template_Label_7, 0, 6, 1, 1)
         self.Template_Label_4 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_4.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_4.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_4.setText("")
         self.Template_Label_4.setObjectName("Template_Label_4")
         self.gridLayout_3.addWidget(self.Template_Label_4, 0, 3, 1, 1)
         self.Template_Label_8 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_8.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_8.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_8.setText("")
         self.Template_Label_8.setObjectName("Template_Label_8")
         self.gridLayout_3.addWidget(self.Template_Label_8, 0, 7, 1, 1)
         self.Template_Label_3 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_3.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_3.setText("")
         self.Template_Label_3.setObjectName("Template_Label_3")
         self.gridLayout_3.addWidget(self.Template_Label_3, 0, 2, 1, 1)
         self.Template_Label_6 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_6.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_6.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_6.setText("")
         self.Template_Label_6.setObjectName("Template_Label_6")
         self.gridLayout_3.addWidget(self.Template_Label_6, 0, 5, 1, 1)
         self.Template_Label_5 = QtWidgets.QLabel(self.Filter_Box)
-        self.Template_Label_5.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Template_Label_5.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Template_Label_5.setText("")
         self.Template_Label_5.setObjectName("Template_Label_5")
         self.gridLayout_3.addWidget(self.Template_Label_5, 0, 4, 1, 1)
@@ -126,47 +136,55 @@ class Ui_VImage_Main(object):
         self.gridLayout.addWidget(self.Image_Box, 1, 1, 1, 1)
         self.Tool_Box = QtWidgets.QGroupBox(self.centralwidget)
         self.Tool_Box.setMaximumSize(QtCore.QSize(230, 16777215))
-        self.Tool_Box.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.Tool_Box.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.Tool_Box.setObjectName("Tool_Box")
         self.formLayout = QtWidgets.QFormLayout(self.Tool_Box)
         self.formLayout.setObjectName("formLayout")
         self.label = QtWidgets.QLabel(self.Tool_Box)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.label)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.label)
         self.Brightness_Slider = QtWidgets.QSlider(self.Tool_Box)
         self.Brightness_Slider.setMinimum(0)
         self.Brightness_Slider.setMaximum(200)
         self.Brightness_Slider.setValue(100)
         self.Brightness_Slider.setOrientation(QtCore.Qt.Horizontal)
         self.Brightness_Slider.setObjectName("Brightness_Slider")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.SpanningRole, self.Brightness_Slider)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.SpanningRole, self.Brightness_Slider)
         self.label_2 = QtWidgets.QLabel(self.Tool_Box)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.SpanningRole, self.label_2)
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.SpanningRole, self.label_2)
         self.label_3 = QtWidgets.QLabel(self.Tool_Box)
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
-        self.formLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.label_3)
+        self.formLayout.setWidget(
+            5, QtWidgets.QFormLayout.SpanningRole, self.label_3)
         self.Sharpness_Slider = QtWidgets.QSlider(self.Tool_Box)
         self.Sharpness_Slider.setMinimum(0)
         self.Sharpness_Slider.setMaximum(200)
         self.Sharpness_Slider.setValue(100)
         self.Sharpness_Slider.setOrientation(QtCore.Qt.Horizontal)
         self.Sharpness_Slider.setObjectName("Sharpness_Slider")
-        self.formLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.Sharpness_Slider)
+        self.formLayout.setWidget(
+            6, QtWidgets.QFormLayout.SpanningRole, self.Sharpness_Slider)
         self.label_4 = QtWidgets.QLabel(self.Tool_Box)
         self.label_4.setAlignment(QtCore.Qt.AlignCenter)
         self.label_4.setObjectName("label_4")
-        self.formLayout.setWidget(7, QtWidgets.QFormLayout.SpanningRole, self.label_4)
+        self.formLayout.setWidget(
+            7, QtWidgets.QFormLayout.SpanningRole, self.label_4)
         self.Saturation_Slider = QtWidgets.QSlider(self.Tool_Box)
         self.Saturation_Slider.setMinimum(0)
         self.Saturation_Slider.setMaximum(200)
         self.Saturation_Slider.setValue(100)
         self.Saturation_Slider.setOrientation(QtCore.Qt.Horizontal)
         self.Saturation_Slider.setObjectName("Saturation_Slider")
-        self.formLayout.setWidget(8, QtWidgets.QFormLayout.SpanningRole, self.Saturation_Slider)
+        self.formLayout.setWidget(
+            8, QtWidgets.QFormLayout.SpanningRole, self.Saturation_Slider)
         # self.label_5 = QtWidgets.QLabel(self.Tool_Box)
         # self.label_5.setAlignment(QtCore.Qt.AlignCenter)
         # self.label_5.setObjectName("label_5")
@@ -179,14 +197,16 @@ class Ui_VImage_Main(object):
         # self.formLayout.setWidget(10, QtWidgets.QFormLayout.SpanningRole, self.Hue_Slider)
         self.Rotate_Box = QtWidgets.QGroupBox(self.Tool_Box)
         self.Rotate_Box.setMinimumSize(QtCore.QSize(0, 100))
-        self.Rotate_Box.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.Rotate_Box.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.Rotate_Box.setObjectName("Rotate_Box")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.Rotate_Box)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.Rotate_Right_Button = QtWidgets.QPushButton(self.Rotate_Box)
         self.Rotate_Right_Button.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_right_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(
+            "c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_right_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Rotate_Right_Button.setIcon(icon)
         self.Rotate_Right_Button.setIconSize(QtCore.QSize(48, 48))
         self.Rotate_Right_Button.setObjectName("Rotate_Right_Button")
@@ -195,7 +215,8 @@ class Ui_VImage_Main(object):
         self.Rotate_Flip_Button.setMinimumSize(QtCore.QSize(0, 50))
         self.Rotate_Flip_Button.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_flip_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(
+            "c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_flip_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Rotate_Flip_Button.setIcon(icon1)
         self.Rotate_Flip_Button.setIconSize(QtCore.QSize(48, 48))
         self.Rotate_Flip_Button.setObjectName("Rotate_Flip_Button")
@@ -204,24 +225,28 @@ class Ui_VImage_Main(object):
         self.Rotate_Left_Button.setAutoFillBackground(False)
         self.Rotate_Left_Button.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_left_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(
+            "c:\\Users\\Himanshu\\Desktop\\Files\\Projects\\VImage\\VImage-1\\tests\\rotate_left_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Rotate_Left_Button.setIcon(icon2)
         self.Rotate_Left_Button.setIconSize(QtCore.QSize(48, 48))
         self.Rotate_Left_Button.setObjectName("Rotate_Left_Button")
         self.gridLayout_4.addWidget(self.Rotate_Left_Button, 0, 0, 1, 1)
-        self.formLayout.setWidget(11, QtWidgets.QFormLayout.SpanningRole, self.Rotate_Box)
+        self.formLayout.setWidget(
+            11, QtWidgets.QFormLayout.SpanningRole, self.Rotate_Box)
         self.Contrast_Slider = QtWidgets.QSlider(self.Tool_Box)
         self.Contrast_Slider.setMinimum(50)
         self.Contrast_Slider.setMaximum(150)
         self.Contrast_Slider.setValue(100)
         self.Contrast_Slider.setOrientation(QtCore.Qt.Horizontal)
         self.Contrast_Slider.setObjectName("Contrast_Slider")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.Contrast_Slider)
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.SpanningRole, self.Contrast_Slider)
         self.Crop_Button = QtWidgets.QPushButton(self.Tool_Box)
         self.Crop_Button.setObjectName("Crop_Button")
         self.Crop_Button.setText("Crop")
         self.Crop_Button.setStyleSheet("font: 10pt")
-        self.formLayout.setWidget(12, QtWidgets.QFormLayout.SpanningRole, self.Crop_Button)
+        self.formLayout.setWidget(
+            12, QtWidgets.QFormLayout.SpanningRole, self.Crop_Button)
         self.gridLayout.addWidget(self.Tool_Box, 0, 0, 2, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
         VImage_Main.setCentralWidget(self.centralwidget)
@@ -283,7 +308,8 @@ class Ui_VImage_Main(object):
 
     def retranslateUi(self, VImage_Main):
         _translate = QtCore.QCoreApplication.translate
-        VImage_Main.setWindowTitle(_translate("VImage_Main", "VImage - Simple Image Manipulation"))
+        VImage_Main.setWindowTitle(_translate(
+            "VImage_Main", "VImage - Simple Image Manipulation"))
         self.Filter_Box.setTitle(_translate("VImage_Main", "Filters"))
         self.Image_Box.setTitle(_translate("VImage_Main", "Image"))
         self.Tool_Box.setTitle(_translate("VImage_Main", "Tool Box"))
@@ -324,7 +350,7 @@ class Ui_VImage_Main(object):
         self.actionDark.triggered.connect(self.DarkMode)
         self.actionLight.triggered.connect(self.LightMode)
 
-        #Modules By VCF Team Member Ankit 
+        # Modules By VCF Team Member Ankit
         self.Brightness_Slider.valueChanged.connect(self.Calculate)
         self.Contrast_Slider.valueChanged.connect(self.Calculate)
         self.Sharpness_Slider.valueChanged.connect(self.Calculate)
@@ -333,28 +359,39 @@ class Ui_VImage_Main(object):
         self.Rotate_Right_Button.clicked.connect(self.RotateRight)
         self.Rotate_Left_Button.clicked.connect(self.RotateLeft)
         self.Rotate_Flip_Button.clicked.connect(self.Flip)
+        self.Crop_Button.clicked.connect(self.crop)
+        self.Template_Label_1.mousePressEvent = self.Set_Filter1
+        self.Template_Label_2.mousePressEvent = self.Set_Filter2
+        self.Template_Label_3.mousePressEvent = self.Set_Filter3
+        self.Template_Label_4.mousePressEvent = self.Set_Filter4
+        self.Template_Label_5.mousePressEvent = self.Set_Filter5
+        self.Template_Label_6.mousePressEvent = self.Set_Filter6
+        self.Template_Label_7.mousePressEvent = self.Set_Filter7
+        self.Template_Label_8.mousePressEvent = self.Set_Filter8
 
-        self.Template_Label_1.mousePressEvent = self.dosomething
 # Implementation of different methods
-#Modules By Himanshu
-    def dosomething(self,event):
-        pass
+# Modules By Himanshu
     def Save(self):
         if(self.save_path == "" or self.save_path == None):
             self.SaveAs()
         else:
             action_controls.Save(self.imgData, self.save_path)
-            
+
     def SaveAs(self):
         self.save_path = action_controls.SaveAs(self.imgData)
+
     def Exit(self):
         app.exit()
+
     def ExportPNG(self):
         action_controls.ExportPNG(self.preview_img_data)
+
     def ExportJPG(self):
         action_controls.ExportJPG(self.preview_img_data)
+
     def ExportPDF(self):
         action_controls.ExportPDF(self.preview_img_data)
+
     def Open(self):
         self.Brightness_Slider.setValue(100)
         self.Contrast_Slider.setValue(100)
@@ -364,27 +401,27 @@ class Ui_VImage_Main(object):
             self.preview_img_data = self.imgData
             self.open_path, self.image, self.imgData = action_controls.Open()
             self.Show()
+            self.Set_Filter_Label()
         except:
             pass
-        
 
     def DarkMode(self):
         action_controls.DarkMode(VImage_Main)
+
     def LightMode(self):
         action_controls.LightMode(VImage_Main)
-    
+
     def Show(self):
         self.Image_Label.setPixmap(QtGui.QPixmap.fromImage(self.image))
         self.Image_Label.setScaledContents(True)
-#*******************************************************************
-#Modules By Ankit 
+# *******************************************************************
+# Modules By Ankit
+
     def Brightness_Control(self, b):
         return image_processing.Brightness_Control(self.preview_img_data, b)
-    
 
     def Contrast_Control(self, c):
         return image_processing.Contrast_Control(self.preview_img_data, c)
-        
 
     def Sharpness_Control(self, s):
         return image_processing.Sharpness_Control(self.preview_img_data, s)
@@ -396,7 +433,7 @@ class Ui_VImage_Main(object):
         return image_processing.Hue_Control(self.preview_img_data, h)
 
     def Calculate(self):
-        try: 
+        try:
             self.preview_img_data = self.imgData
             b = self.Brightness_Slider.value()
             c = self.Contrast_Slider.value()
@@ -413,19 +450,22 @@ class Ui_VImage_Main(object):
                 self.preview_img_data = self.Saturation_Control(st)
             # self.preview_img_data = self.Hue_Control(h)
             if self.rotate_angle:
-                self.preview_img_data = image_processing.Rotate(self.preview_img_data, self.rotate_angle)
+                self.preview_img_data = image_processing.Rotate(
+                    self.preview_img_data, self.rotate_angle)
 
             self.image = ImageQt.ImageQt(self.preview_img_data)
             self.Show()
         except:
             pass
-    
+
     def RotateRight(self):
         self.rotate_angle = 0 if self.rotate_angle == -270 else self.rotate_angle - 90
         self.Calculate()
+
     def RotateLeft(self):
         self.rotate_angle = 0 if self.rotate_angle == 270 else self.rotate_angle + 90
         self.Calculate()
+
     def Flip(self):
         try:
             self.preview_img_data = image_processing.Flip(self.preview_img_data)
@@ -434,6 +474,84 @@ class Ui_VImage_Main(object):
             self.Show()
         except:
             pass
+
+    def crop(self):
+        try:
+            self.preview_img_data = image_processing.Crop(QtGui.QPixmap.fromImage(self.image))
+            self.image = self.preview_img_data.toImage()
+            self.Show()
+        except:
+            pass
+
+    def Set_Filter_Label(self):
+    
+        self.Template_Label_1.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.BLUR)))
+        self.Template_Label_1.setScaledContents(True)
+
+        self.Template_Label_2.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 9, -1, -1, -1, -1), 1, 0))))
+        self.Template_Label_2.setScaledContents(True)
+
+        self.Template_Label_3.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.EMBOSS)))
+        self.Template_Label_3.setScaledContents(True)
+
+        self.Template_Label_4.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.MaxFilter)))
+        self.Template_Label_4.setScaledContents(True)
+
+        self.Template_Label_5.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.CONTOUR)))
+        self.Template_Label_5.setScaledContents(True)
+
+        self.Template_Label_6.setPixmap(ImageQt.toqpixmap(ImageEnhance.Color(self.imgData).enhance(1)))
+        self.Template_Label_6.setScaledContents(True)
+        
+        self.Template_Label_7.setPixmap(ImageQt.toqpixmap(ImageEnhance.Color(self.imgData).enhance(0)))
+        self.Template_Label_7.setScaledContents(True)
+
+        self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(1.5)
+        self.Template_Label_8.setPixmap(ImageQt.toqpixmap(ImageEnhance.Brightness(self.preview_img_data).enhance(1.5)))
+        self.Template_Label_8.setScaledContents(True)
+    
+    def Set_Filter1(self, event):
+        self.preview_img_data = self.imgData.filter(ImageFilter.BLUR)
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+    
+    def Set_Filter2(self, event):
+        self.preview_img_data = self.imgData.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 9, -1, -1, -1, -1), 1, 0))
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+    
+    def Set_Filter3(self, event):
+        self.preview_img_data = self.imgData.filter(ImageFilter.EMBOSS)
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+    
+    def Set_Filter4(self, event):
+        self.preview_img_data = self.imgData.filter(ImageFilter.MaxFilter)
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+    
+    def Set_Filter5(self, event):
+        self.preview_img_data = self.imgData.filter(ImageFilter.CONTOUR)
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+    
+    def Set_Filter6(self, event):
+        self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(2)
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+    
+    def Set_Filter7(self, event):
+        self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(0)
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+
+    def Set_Filter8(self, event):
+        self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(1.5)
+        self.preview_img_data = ImageEnhance.Brightness(self.preview_img_data).enhance(1.5)
+        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Show()
+    
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

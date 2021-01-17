@@ -1,5 +1,7 @@
 from PIL import Image, ImageEnhance, ImageFilter
+from PyQt5.QtCore import Qt
 from numpy.lib.type_check import imag
+from qcrop.ui import QCrop
 
 
 def Brightness_Control(image, value):
@@ -47,4 +49,12 @@ def Rotate(image, angle):
 def Flip(image):
     return image.transpose(Image.FLIP_LEFT_RIGHT)
 
+def Crop(image):
+    crop_tool = QCrop(image)
 
+    status = crop_tool.exec()
+
+    if status == QCrop.Accepted:
+        return crop_tool.image
+    else:
+        return image
