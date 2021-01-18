@@ -45,7 +45,7 @@ def AboutVCF():
     webbrowser.open("http://vcfstudio.in/about")
 
 def AboutVImage():
-    pass
+    webbrowser.open("http://vcfstudio.in/vimage")
 
 def ExportPNG(image):
     dst_path, _ = QFileDialog.getSaveFileName(filter="PNG (*.png)")
