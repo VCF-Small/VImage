@@ -11,9 +11,67 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from numpy.lib.type_check import imag
 import action_controls
 import image_processing
-from PIL import ImageQt, ImageFilter, ImageEnhance
+from PIL import Image, ImageQt, ImageFilter, ImageEnhance
+import sys
+
+class Ui_Resize(QtWidgets.QMainWindow):
+        # ensure this window gets garbage-collected when closed
+    def setupUi(self, Resize):
+        Resize.setObjectName("Resize")
+        Resize.resize(357, 156)
+        Resize.setMinimumSize(QtCore.QSize(357, 156))
+        Resize.setMaximumSize(QtCore.QSize(357, 156))
+        self.pushButton = QtWidgets.QPushButton(Resize)
+        self.pushButton.setGeometry(QtCore.QRect(80, 90, 101, 41))
+        self.pushButton.setStyleSheet("font:12pt;")
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(Resize)
+        self.pushButton_2.setGeometry(QtCore.QRect(190, 90, 101, 41))
+        self.pushButton_2.setStyleSheet("font:12pt;")
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.label = QtWidgets.QLabel(Resize)
+        self.label.setGeometry(QtCore.QRect(25, 25, 400, 21))
+        self.label.setStyleSheet("font:9pt;")
+        self.label.setObjectName("label")
+        self.lineEdit = QtWidgets.QLineEdit(Resize)
+        self.lineEdit.setGeometry(QtCore.QRect(100, 50, 141, 31))
+        self.lineEdit.setStyleSheet("font:16pt;")
+        self.lineEdit.setText("")
+        self.lineEdit.setObjectName("lineEdit")
+        self.label_2 = QtWidgets.QLabel(Resize)
+        self.label_2.setGeometry(QtCore.QRect(250, 50, 51, 31))
+        self.label_2.setStyleSheet("font: 12pt;\n"
+"")
+        self.label_2.setObjectName("label_2")
+
+        self.retranslateUi(Resize)
+        self.pushButton.clicked.connect(self.SetScale)
+        self.pushButton_2.clicked.connect(Resize.close)
+
+        self.lineEdit.setText(str(ui.size_scale))
+
+        QtCore.QMetaObject.connectSlotsByName(Resize)
 
 
+    def retranslateUi(self, Resize):
+        _translate = QtCore.QCoreApplication.translate
+        Resize.setWindowTitle(_translate("Resize", "Resize"))
+        self.pushButton.setText(_translate("Resize", "Resize"))
+        self.pushButton_2.setText(_translate("Resize", "Cancel"))
+        self.label.setText(_translate("Resize", "Cange size to x% of the original image"))
+        self.label_2.setText(_translate("Resize", "%"))
+
+    def SetScale(self, Dialog):
+        try:
+            if(self.lineEdit.text() != ""):
+                ui.size_scale = int(self.lineEdit.text())
+                ui.Calculate()
+                self.pushButton_2.click()
+            else:
+                self.pushButton_2.click()
+        except:
+            pass
+            
 class Ui_VImage_Main(object):
     def setupUi(self, VImage_Main):
         self.open_path = None
@@ -21,8 +79,10 @@ class Ui_VImage_Main(object):
         self.imgData = None  # This is The PIL Image
         self.image = None  # This is the QT Image
         self.preview_img_data = None
+        self.filter_img_data = None
         self.rotate_angle = 0
         self.is_Flip = False
+        self.size_scale = 100 #100 means same scale
         VImage_Main.setObjectName("VImage_Main")
         VImage_Main.resize(1373, 891)
         VImage_Main.setMinimumSize(QtCore.QSize(640, 480))
@@ -244,9 +304,21 @@ class Ui_VImage_Main(object):
         self.Crop_Button = QtWidgets.QPushButton(self.Tool_Box)
         self.Crop_Button.setObjectName("Crop_Button")
         self.Crop_Button.setText("Crop")
-        self.Crop_Button.setStyleSheet("font: 10pt")
+        self.Crop_Button.setStyleSheet("font: 10pt;padding:10px")
         self.formLayout.setWidget(
             12, QtWidgets.QFormLayout.SpanningRole, self.Crop_Button)
+        self.Resize_Button = QtWidgets.QPushButton(self.Tool_Box)
+        self.Resize_Button.setObjectName("Resize_Button")
+        self.Resize_Button.setText("Resize")
+        self.Resize_Button.setStyleSheet("font: 10pt;padding:10px")
+        self.formLayout.setWidget(
+            13, QtWidgets.QFormLayout.SpanningRole, self.Resize_Button)
+        self.Reset_Button = QtWidgets.QPushButton(self.Tool_Box)
+        self.Reset_Button.setObjectName("Reset_Button")
+        self.Reset_Button.setText("Reset Image")
+        self.Reset_Button.setStyleSheet("font: 10pt; padding:10px")
+        self.formLayout.setWidget(
+            14, QtWidgets.QFormLayout.SpanningRole, self.Reset_Button)
         self.gridLayout.addWidget(self.Tool_Box, 0, 0, 2, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
         VImage_Main.setCentralWidget(self.centralwidget)
@@ -349,7 +421,8 @@ class Ui_VImage_Main(object):
         self.actionVCF.triggered.connect(action_controls.AboutVCF)
         self.actionDark.triggered.connect(self.DarkMode)
         self.actionLight.triggered.connect(self.LightMode)
-
+        self.Reset_Button.clicked.connect(self.Reset_Image)
+        self.Resize_Button.clicked.connect(self.Resize_Image)
         # Modules By VCF Team Member Ankit
         self.Brightness_Slider.valueChanged.connect(self.Calculate)
         self.Contrast_Slider.valueChanged.connect(self.Calculate)
@@ -369,6 +442,8 @@ class Ui_VImage_Main(object):
         self.Template_Label_7.mousePressEvent = self.Set_Filter7
         self.Template_Label_8.mousePressEvent = self.Set_Filter8
 
+    def test(self):
+        print(self.size_scale)
 # Implementation of different methods
 # Modules By Himanshu
     def Save(self):
@@ -384,19 +459,49 @@ class Ui_VImage_Main(object):
         app.exit()
 
     def ExportPNG(self):
+        self.preview_img_data = self.Render()
         action_controls.ExportPNG(self.preview_img_data)
 
     def ExportJPG(self):
+        self.preview_img_data = self.Render()
         action_controls.ExportJPG(self.preview_img_data)
 
     def ExportPDF(self):
+        self.preview_img_data = self.Render()
         action_controls.ExportPDF(self.preview_img_data)
 
+    def Render(self):
+        if(self.filter_img_data.size[0] > 300):
+            self.preview_img_data = self.filter_img_data.resize((int(self.imgData.size[0] * self.size_scale/100),int(self.imgData.size[1] * self.size_scale/100)))
+            return self.preview_img_data
+        else:
+            try:
+                self.preview_img_data = self.imgData.resize((int(self.imgData.size[0] * self.size_scale/100),int(self.imgData.size[1] * self.size_scale/100)))
+                b = self.Brightness_Slider.value()
+                c = self.Contrast_Slider.value()
+                s = self.Sharpness_Slider.value()
+                st = self.Saturation_Slider.value()
+                # h = self.Hue_Slider.value()
+                if b != 0:
+                    self.preview_img_data = self.Brightness_Control(b)
+                if c != 0:
+                    self.preview_img_data = self.Contrast_Control(c)
+                if s != 0:
+                    self.preview_img_data = self.Sharpness_Control(s)
+                if st != 0:
+                    self.preview_img_data = self.Saturation_Control(st)
+                # self.preview_img_data = self.Hue_Control(h)
+                if self.rotate_angle:
+                    self.preview_img_data = image_processing.Rotate(
+                        self.preview_img_data, self.rotate_angle)
+
+                return self.preview_img_data
+            except:
+                pass
+
     def Open(self):
-        self.Brightness_Slider.setValue(100)
-        self.Contrast_Slider.setValue(100)
-        self.Saturation_Slider.setValue(100)
-        self.Sharpness_Slider.setValue(100)
+        self.Reset_Sliders()
+        self.size_scale = 100
         try:
             self.preview_img_data = self.imgData
             self.open_path, self.image, self.imgData = action_controls.Open()
@@ -414,6 +519,31 @@ class Ui_VImage_Main(object):
     def Show(self):
         self.Image_Label.setPixmap(QtGui.QPixmap.fromImage(self.image))
         self.Image_Label.setScaledContents(True)
+    
+    def Resize_Image(self):
+        self.window = QtWidgets.QWidget()
+        self.ui = Ui_Resize()
+        self.ui.setupUi(self.window)
+        self.window.show()
+
+
+    def Reset_Sliders(self):
+        self.Brightness_Slider.setValue(100)
+        self.Contrast_Slider.setValue(100)
+        self.Saturation_Slider.setValue(100)
+        self.Sharpness_Slider.setValue(100)
+        
+
+    def Reset_Image(self):
+        try:
+            self.imgData = Image.open(self.open_path)
+            self.image = ImageQt.ImageQt(self.imgData)
+            self.Reset_Sliders()
+            self.Set_Filter_Label()
+            self.Show()
+        except:
+            pass
+
 # *******************************************************************
 # Modules By Ankit
 
@@ -434,7 +564,7 @@ class Ui_VImage_Main(object):
 
     def Calculate(self):
         try:
-            self.preview_img_data = self.imgData
+            self.preview_img_data = self.imgData.resize((int(1920/1.5 * self.size_scale/100), int(1080/1.5 * self.size_scale/100)))
             b = self.Brightness_Slider.value()
             c = self.Contrast_Slider.value()
             s = self.Sharpness_Slider.value()
@@ -479,81 +609,92 @@ class Ui_VImage_Main(object):
         try:
             self.preview_img_data = image_processing.Crop(QtGui.QPixmap.fromImage(self.image))
             self.image = self.preview_img_data.toImage()
+            self.imgData = ImageQt.fromqimage(self.image)
+            self.Set_Filter_Label()
             self.Show()
         except:
             pass
 
     def Set_Filter_Label(self):
-    
-        self.Template_Label_1.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.BLUR)))
+
+        self.filter_img_data = self.imgData.resize((300,300))
+        self.Template_Label_1.setPixmap(ImageQt.toqpixmap(self.filter_img_data.filter(ImageFilter.BLUR)))
         self.Template_Label_1.setScaledContents(True)
 
-        self.Template_Label_2.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 9, -1, -1, -1, -1), 1, 0))))
+        self.Template_Label_2.setPixmap(ImageQt.toqpixmap(self.filter_img_data.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 9, -1, -1, -1, -1), 1, 0))))
         self.Template_Label_2.setScaledContents(True)
 
-        self.Template_Label_3.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.EMBOSS)))
+        self.Template_Label_3.setPixmap(ImageQt.toqpixmap(self.filter_img_data.filter(ImageFilter.EMBOSS)))
         self.Template_Label_3.setScaledContents(True)
 
-        self.Template_Label_4.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.MaxFilter)))
+        self.Template_Label_4.setPixmap(ImageQt.toqpixmap(self.filter_img_data.filter(ImageFilter.MaxFilter)))
         self.Template_Label_4.setScaledContents(True)
 
-        self.Template_Label_5.setPixmap(ImageQt.toqpixmap(self.imgData.filter(ImageFilter.CONTOUR)))
+        self.Template_Label_5.setPixmap(ImageQt.toqpixmap(self.filter_img_data.filter(ImageFilter.CONTOUR)))
         self.Template_Label_5.setScaledContents(True)
 
-        self.Template_Label_6.setPixmap(ImageQt.toqpixmap(ImageEnhance.Color(self.imgData).enhance(1)))
+        self.Template_Label_6.setPixmap(ImageQt.toqpixmap(ImageEnhance.Color(self.filter_img_data).enhance(1)))
         self.Template_Label_6.setScaledContents(True)
         
-        self.Template_Label_7.setPixmap(ImageQt.toqpixmap(ImageEnhance.Color(self.imgData).enhance(0)))
+        self.Template_Label_7.setPixmap(ImageQt.toqpixmap(ImageEnhance.Color(self.filter_img_data).enhance(0)))
         self.Template_Label_7.setScaledContents(True)
 
-        self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(1.5)
-        self.Template_Label_8.setPixmap(ImageQt.toqpixmap(ImageEnhance.Brightness(self.preview_img_data).enhance(1.5)))
+        self.filter_img_data = ImageEnhance.Color(self.filter_img_data).enhance(1.5)
+        self.Template_Label_8.setPixmap(ImageQt.toqpixmap(ImageEnhance.Brightness(self.filter_img_data).enhance(1.5)))
         self.Template_Label_8.setScaledContents(True)
     
     def Set_Filter1(self, event):
-        self.preview_img_data = self.imgData.filter(ImageFilter.BLUR)
-        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.filter_img_data = self.imgData.filter(ImageFilter.BLUR)
+        self.image = ImageQt.ImageQt(self.filter_img_data)
+        self.Reset_Sliders()
         self.Show()
     
     def Set_Filter2(self, event):
-        self.preview_img_data = self.imgData.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 9, -1, -1, -1, -1), 1, 0))
-        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.filter_img_data = self.imgData.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 9, -1, -1, -1, -1), 1, 0))
+        self.image = ImageQt.ImageQt(self.filter_img_data)
+        self.Reset_Sliders()
         self.Show()
     
     def Set_Filter3(self, event):
-        self.preview_img_data = self.imgData.filter(ImageFilter.EMBOSS)
-        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.filter_img_data = self.imgData.filter(ImageFilter.EMBOSS)
+        self.image = ImageQt.ImageQt(self.filter_img_data)
+        self.Reset_Sliders()
         self.Show()
     
     def Set_Filter4(self, event):
-        self.preview_img_data = self.imgData.filter(ImageFilter.MaxFilter)
-        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.filter_img_data = self.imgData.filter(ImageFilter.MaxFilter)
+        self.image = ImageQt.ImageQt(self.filter_img_data)
+        self.Reset_Sliders()
         self.Show()
     
     def Set_Filter5(self, event):
-        self.preview_img_data = self.imgData.filter(ImageFilter.CONTOUR)
-        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.filter_img_data = self.imgData.filter(ImageFilter.CONTOUR)
+        self.image = ImageQt.ImageQt(self.filter_img_data)
+        self.Reset_Sliders()
         self.Show()
     
     def Set_Filter6(self, event):
-        self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(2)
-        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.filter_img_data = ImageEnhance.Color(self.imgData).enhance(2)
+        self.image = ImageQt.ImageQt(self.filter_img_data)
+        self.Reset_Sliders()
         self.Show()
+    
     
     def Set_Filter7(self, event):
         self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(0)
         self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.Reset_Sliders()
         self.Show()
 
     def Set_Filter8(self, event):
-        self.preview_img_data = ImageEnhance.Color(self.imgData).enhance(1.5)
-        self.preview_img_data = ImageEnhance.Brightness(self.preview_img_data).enhance(1.5)
-        self.image = ImageQt.ImageQt(self.preview_img_data)
+        self.filter_img_data = ImageEnhance.Color(self.imgData).enhance(1.5)
+        self.filter_img_data = ImageEnhance.Brightness(self.filter_img_data).enhance(1.5)
+        self.image = ImageQt.ImageQt(self.filter_img_data)
+        self.Reset_Sliders()
         self.Show()
     
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     VImage_Main = QtWidgets.QMainWindow()
     ui = Ui_VImage_Main()

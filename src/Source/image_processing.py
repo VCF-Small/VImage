@@ -1,5 +1,4 @@
-from PIL import Image, ImageEnhance, ImageFilter
-from PyQt5.QtCore import Qt
+from PIL import Image, ImageEnhance
 from numpy.lib.type_check import imag
 from qcrop.ui import QCrop
 
@@ -51,10 +50,10 @@ def Flip(image):
 
 def Crop(image):
     crop_tool = QCrop(image)
-
+    
     status = crop_tool.exec()
-
     if status == QCrop.Accepted:
         return crop_tool.image
+
     else:
         return image
