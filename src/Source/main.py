@@ -12,6 +12,8 @@ import action_controls
 import image_processing
 from PIL import Image, ImageQt, ImageFilter, ImageEnhance
 import sys
+import cv2
+import numpy as np
 
 class Ui_Resize(QtWidgets.QMainWindow):
         # ensure this window gets garbage-collected when closed
@@ -310,6 +312,16 @@ class Ui_VImage_Main(object):
         self.Crop_Button.setStyleSheet("font: 10pt;padding:10px")
         self.formLayout.setWidget(
             12, QtWidgets.QFormLayout.SpanningRole, self.Crop_Button)
+
+        # Denoise Image button
+        self.Denoise_Button = QtWidgets.QPushButton(self.Tool_Box)
+        self.Denoise_Button.setObjectName("Denoise_Button")
+        self.Denoise_Button.setText("Denoise")
+        self.Denoise_Button.setStyleSheet("font: 10pt;padding:10px")
+        self.formLayout.setWidget(
+            15, QtWidgets.QFormLayout.SpanningRole, self.Denoise_Button)
+
+        
         self.Resize_Button = QtWidgets.QPushButton(self.Tool_Box)
         self.Resize_Button.setObjectName("Resize_Button")
         self.Resize_Button.setText("Resize")
@@ -436,6 +448,7 @@ class Ui_VImage_Main(object):
         self.Rotate_Left_Button.clicked.connect(self.RotateLeft)
         self.Rotate_Flip_Button.clicked.connect(self.Flip)
         self.Crop_Button.clicked.connect(self.crop)
+        self.Denoise_Button.clicked.connect(self.Denoise_Img)
         self.Template_Label_1.mousePressEvent = self.Set_Filter1
         self.Template_Label_2.mousePressEvent = self.Set_Filter2
         self.Template_Label_3.mousePressEvent = self.Set_Filter3
@@ -696,6 +709,14 @@ class Ui_VImage_Main(object):
         self.image = ImageQt.ImageQt(self.filter_img_data)
         self.Reset_Sliders()
         self.Show()
+
+    def Denoise_Img(self):
+        try:
+            self.image = Image.fromarray(cv2.medianBlur(np.array(self.imgData), 5))
+            self.image = ImageQt.ImageQt(self.image)
+            self.Show()
+        except:
+            pass
     
 
 if __name__ == "__main__":
