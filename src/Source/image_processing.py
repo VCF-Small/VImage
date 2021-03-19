@@ -56,4 +56,4 @@ def Crop(image):
         return crop_tool.image
 
     else:
-        return image
+        return
