@@ -713,7 +713,9 @@ class Ui_VImage_Main(object):
     def Denoise_Img(self):
         try:
             self.image = Image.fromarray(cv2.medianBlur(np.array(self.imgData), 5))
+            self.imgData = self.image
             self.image = ImageQt.ImageQt(self.image)
+            self.Set_Filter_Label()
             self.Show()
         except:
             pass
