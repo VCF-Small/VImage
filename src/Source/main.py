@@ -525,6 +525,7 @@ class Ui_VImage_Main(object):
             self.Set_Filter_Label()
         except:
             pass
+            
 
     def DarkMode(self):
         action_controls.DarkMode(VImage_Main)

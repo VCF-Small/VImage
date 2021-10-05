@@ -8,7 +8,7 @@ DarkStyleSheet = '''QSlider::groove:horizontal{height:10px;margin:0 0}QSlider::h
 LightStyleSheet = '''QSlider::groove:horizontal{height:10px;margin:0 0}QSlider::handle:horizontal{background-color:#0096fa;border:1px;border-radius:3px;height:40px;width:40px;margin:0 0}QSlider::handle:horizontal:hover{background-color:#00c896;border:1px;border-radius:3px;height:40px;width:40px;margin:0 0}*{font:8pt "MS Shell Dlg 2"}#Tool_Box QLabel{font:10pt "MS Shell Dlg 2"}QPushButton{background-color:#e6f0f0;border:none;border-radius:5px}QPushButton:hover{background-color:#e6ffff;border:none}QPushButton:pressed{background-color:#c8ffff;border:none}#VImage_Main{background-color:#fff}'''
 
 def Open():
-    src_path, _ = QFileDialog.getOpenFileName(filter="Images (*.png *.jpg *.npy)")
+    src_path, _ = QFileDialog.getOpenFileName(filter="Images (*.png *.jpg *.npy *.jpeg)")
     if(src_path != "" or src_path != None):
         name, exten = splitext(src_path)
         image = None
